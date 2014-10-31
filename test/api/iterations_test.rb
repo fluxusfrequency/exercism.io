@@ -30,4 +30,11 @@ class ItertaionsApiTest < Minitest::Test
     options = {format: :json, :name => 'api_iterations'}
     Approvals.verify(output, options)
   end
+
+  def test_fetch_notification
+    alice = User.create(username: 'alice', github_id: 1)
+
+    post '/user/fetch', { 'exercises': [] }
+    assert_equal 201, last_response.status
+  end
 end

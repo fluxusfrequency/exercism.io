@@ -5,6 +5,21 @@ module ExercismAPI
         halt *Xapi.get("v2", "exercises", "restore", key: key)
       end
 
+      post '/user/fetch' do
+        request.body.rewind
+        data = request.body.read
+        data = JSON.parse(data)
+        user = User.where(key: data['key']).first
+        # use the data['exercises'] (ids) to find which exercises are already
+        # submitted
+        ids = Array(data['problems'])
+        existing_exercises = user.exercises.where(id: ids).pluck(:id)
+        new_exercises = ids - existing_exercises
+        new_exercises.each do |id|
+          user.exercises.create(problem_id: id)
+        end
+      end
+
       post '/user/assignments' do
         request.body.rewind
         data = request.body.read
